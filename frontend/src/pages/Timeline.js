@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import socket from 'socket.io-client'
 
 import api from '../services/api'
 
@@ -13,6 +14,7 @@ class Timeline extends Component {
   }
 
   componentDidMount () {
+    this.subscribeToEvents()
     this.fetchTweets()
   }
 
@@ -20,6 +22,24 @@ class Timeline extends Component {
     const { data } = await api.get('tweets')
 
     this.setState({ tweets: data })
+  }
+
+  subscribeToEvents = () => {
+    const io = socket('http://localhost:3000')
+
+    io.on('tweet', data => {
+      this.setState({
+        tweets: [data, ...this.state.tweets]
+      })
+    })
+
+    io.on('like', data => {
+      this.setState({
+        tweets: this.state.tweets.map(tweet => (
+          tweet._id === data._id ? data : tweet
+        ))
+      })
+    })
   }
 
   handleNewTweet = async e => {
@@ -60,7 +80,8 @@ class Timeline extends Component {
             placeholder='O que está acontecendo?'
           />
         </form>
-        <ul class='tweet-list'>
+        <ul
+          className='tweet-list'>
           {tweets.map(tweet => (
             <Tweet
               key={tweet._id}
