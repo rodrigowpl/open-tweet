@@ -7,6 +7,8 @@ import twitterLogo from '../twitter.svg'
 import './Timeline.css'
 import Tweet from '../components/Tweet'
 
+import { SERVER_URL } from '../settings'
+
 class Timeline extends Component {
   state = {
     tweets: [],
@@ -25,7 +27,7 @@ class Timeline extends Component {
   }
 
   subscribeToEvents = () => {
-    const io = socket('http://localhost:3000')
+    const io = socket(SERVER_URL)
 
     io.on('tweet', data => {
       this.setState({

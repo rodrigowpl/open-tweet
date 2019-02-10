@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import socket from 'socket.io-client'
 
 import api from '../services/api'
+import { SERVER_URL } from '../../settings'
 
 import Tweet from '../components/Tweet'
 
@@ -39,7 +40,7 @@ class Timeline extends Component {
   }
 
   subscribeToEvents = () => {
-    const io = socket('http://192.168.0.28:3000')
+    const io = socket(SERVER_URL)
 
     io.on('tweet', data => {
       this.setState({

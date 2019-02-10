@@ -2,11 +2,13 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 
+const { MONGO_CONNECT_URL, DATA_BASE_NAME, PORT } = require('../settings')
+
 mongoose.connect(
-  'mongodb+srv://rodrigowpl:qweiop@cluster0-7mnsu.mongodb.net/test?retryWrites=true',
+  MONGO_CONNECT_URL,
   {
     useNewUrlParser: true,
-    dbName: 'omni-backend'
+    dbName: DATA_BASE_NAME
   }
 )
 
@@ -15,7 +17,7 @@ const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
 
-app.use((req, res, next) => {
+app.use((req, _, next) => {
   req.io = io
 
   return next()
@@ -25,6 +27,6 @@ app.use(cors())
 app.use(express.json())
 app.use(require('./routes'))
 
-server.listen(3000, () => {
-  console.log('Server started on port 3000')
+server.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`)
 })
